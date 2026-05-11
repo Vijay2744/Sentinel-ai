@@ -1,82 +1,84 @@
 import streamlit as st
-import requests
+from engine import analyze_decision
 
-# -------------------------------
-# CONFIG
-# -------------------------------
-API_URL = "http://127.0.0.1:8000/analyze"
+# ---------------- PAGE ----------------
 
 st.set_page_config(
     page_title="Sentinel",
     page_icon="🛡️",
-    layout="centered"
+    layout="wide"
 )
 
-# -------------------------------
-# UI HEADER
-# -------------------------------
+# ---------------- HEADER ----------------
+
 st.title("🛡️ Sentinel")
-st.subheader("Universal AI Risk Decision Engine")
 
-st.markdown(
-    "Analyze any important decision before you act."
+st.subheader(
+    "Universal AI Risk Decision Engine"
 )
 
-# -------------------------------
-# INPUT
-# -------------------------------
+st.write(
+    "Analyze decisions, opportunities, risks, and strategic moves before acting."
+)
+
+# ---------------- INPUT ----------------
+
 user_input = st.text_area(
-    "Enter your decision:",
-    placeholder="e.g. Take 10 lakhs loan and invest in stocks"
+    "",
+    height=220,
+    placeholder="Enter your input..."
 )
 
-# -------------------------------
-# BUTTON ACTION
-# -------------------------------
+# ---------------- BUTTON ----------------
+
 if st.button("Analyze Risk"):
 
     if not user_input.strip():
-        st.warning("Please enter a decision")
+
+        st.warning("Please enter an input.")
+
+        st.stop()
+
+    with st.spinner("Sentinel is analyzing..."):
+
+        result = analyze_decision(user_input)
+
+    # ---------------- OUTPUT ----------------
+
+    if "error" in result:
+
+        st.error(result["error"])
+
     else:
-        with st.spinner("Analyzing..."):
-            try:
-                response = requests.post(
-                    API_URL,
-                    json={"decision": user_input},  # IMPORTANT FIX
-                    timeout=10
-                )
 
-                if response.status_code != 200:
-                    st.error(f"API Error: {response.status_code}")
-                    st.write(response.text)
-                else:
-                    result = response.json()
+        col1, col2 = st.columns(2)
 
-                    # -------------------------------
-                    # RESULT DISPLAY
-                    # -------------------------------
-                    st.success("Analysis Complete")
+        with col1:
+            st.metric(
+                "Risk Level",
+                result["risk_level"]
+            )
 
-                    st.markdown("## 📊 Result")
+        with col2:
+            st.metric(
+                "Risk Score",
+                result["risk_score"]
+            )
 
-                    col1, col2, col3 = st.columns(3)
-                    col1.metric("Risk Score", result["risk_score"])
-                    col2.metric("Risk Level", result["risk_level"])
-                    col3.metric("Decision", result["decision"])
+        st.subheader("Summary")
+        st.write(result["summary"])
 
-                    st.markdown("### ⚠️ Risk Types")
-                    for r in result["risk_types"]:
-                        st.write(f"- {r}")
+        st.subheader("Risk Types")
+        st.write(result["risk_types"])
 
-                    st.markdown("### 🧠 Explanation")
-                    st.write(result["explanation"])
+        st.subheader("Key Concerns")
+        st.write(result["key_concerns"])
 
-                    st.markdown("### ✅ Recommendations")
-                    for rec in result["recommendations"]:
-                        st.write(f"- {rec}")
+        st.subheader("Opportunities")
+        st.write(result["opportunities"])
 
-            except requests.exceptions.ConnectionError:
-                st.error("❌ Cannot connect to API. Make sure FastAPI is running on port 8000.")
+        st.subheader("Recommendations")
+        st.write(result["recommendations"])
 
-            except Exception as e:
-                st.error(f"Unexpected error: {e}")
+        st.subheader("Final Verdict")
+        st.success(result["final_verdict"])
