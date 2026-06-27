@@ -209,8 +209,7 @@ display(f"{icon} {decision}")
 st.caption(
     f"Workflow: {workflow} | Policy: {policy} | Audit ID: {audit_id}"
 )
-
-    st.divider()
+st.divider()
 
     st.subheader("Business Intelligence")
 
