@@ -1,346 +1,522 @@
 import streamlit as st
 from engine import analyze_decision
 
-# ---------------------------------------------------
-# PAGE CONFIG
-# ---------------------------------------------------
+# -------------------------------------------------------
+# PAGE CONFIGURATION
+# -------------------------------------------------------
 
 st.set_page_config(
-    page_title="Sentinel Decision Intelligence Engine",
+    page_title="Sentinel Enterprise Decision Intelligence",
+    page_icon="🛡️",
     layout="wide"
 )
 
-# ---------------------------------------------------
-# CUSTOM UI STYLING
-# ---------------------------------------------------
+# -------------------------------------------------------
+# ENTERPRISE THEME
+# -------------------------------------------------------
 
 st.markdown("""
 <style>
 
-.main {
-    padding-top: 2rem;
+.main{
+    padding-top:2rem;
 }
 
-h1 {
-    font-size: 42px !important;
-    font-weight: 700 !important;
+.block-container{
+    padding-top:2rem;
 }
 
-textarea {
-    border-radius: 12px !important;
+h1{
+    font-size:42px !important;
+    font-weight:700 !important;
+    color:#0E4D92;
 }
 
-.stButton > button {
-    border-radius: 10px !important;
-    height: 42px !important;
-    font-weight: 600 !important;
+h2,h3{
+    color:#1B263B;
+}
+
+textarea{
+    border-radius:12px !important;
+}
+
+.stButton>button{
+    width:100%;
+    height:48px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+.metric-card{
+    background:#F8F9FA;
+    padding:15px;
+    border-radius:12px;
+    border:1px solid #EAEAEA;
+}
+
+.audit-box{
+    background:#F4F6F8;
+    padding:12px;
+    border-radius:10px;
+    border-left:5px solid #0E4D92;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------
+# -------------------------------------------------------
 # HEADER
-# ---------------------------------------------------
+# -------------------------------------------------------
 
-st.title("🛡️ Sentinel Decision Intelligence Engine")
+st.title("🛡️ Sentinel Enterprise Decision Intelligence")
 
-st.markdown("""
-Analyze strategic, financial, operational, and governance risks
-before executing critical decisions.
-""")
-
-# ---------------------------------------------------
-# USER ENTRY
-# ---------------------------------------------------
-
-user_input = st.text_area(
-    "Enter Decision Context / Project Details:",
-    placeholder="Describe the business decision, investment, operational change, or strategic move...",
-    height=180
+st.caption(
+    "AI-Powered Decision Intelligence | Policy Engine | Governance | Risk Analytics"
 )
 
-# ---------------------------------------------------
-# SMALL BUTTON LAYOUT
-# ---------------------------------------------------
+st.divider()
 
-col1, col2, col3 = st.columns([1,1,6])
+# -------------------------------------------------------
+# USER INPUT
+# -------------------------------------------------------
+
+st.subheader("Decision Context")
+
+user_input = st.text_area(
+
+    label="Describe the business decision",
+
+    placeholder="""
+Example:
+
+• Launch a new banking product
+
+• Invest ₹50 Cr in a startup
+
+• Change lending policy
+
+• Delete customer records
+
+• Approve unsecured credit
+""",
+
+    height=220
+
+)
+
+# -------------------------------------------------------
+# ACTION BUTTON
+# -------------------------------------------------------
+
+col1,col2,col3=st.columns([2,1,7])
 
 with col1:
-    analyze_clicked = st.button(
-        "Analyze Risk",
+
+    analyze_clicked=st.button(
+
+        "🚀 Analyze Decision",
+
         type="primary"
+
     )
 
-# ---------------------------------------------------
-# ANALYSIS EXECUTION
-# ---------------------------------------------------
+# -------------------------------------------------------
+# EXECUTION
+# -------------------------------------------------------
 
 if analyze_clicked:
 
     if not user_input.strip():
 
-        st.warning("Please enter some context first.")
+        st.warning("Please enter a decision context.")
+
         st.stop()
 
-    with st.spinner("Running system policy audit..."):
+    with st.spinner("Running Sentinel Decision Engine..."):
 
-        # Reset approval states
-        if 'action_status' in st.session_state:
-            del st.session_state['action_status']
+        st.session_state.result = analyze_decision(user_input)
+        # -------------------------------------------------------
+# EXECUTIVE DECISION DASHBOARD
+# -------------------------------------------------------
 
-        try:
-
-            st.session_state.result = analyze_decision(user_input)
-
-        except Exception:
-
-            st.error(
-                "System temporarily unavailable. Please retry."
-            )
-
-            st.stop()
-
-# ---------------------------------------------------
-# RESULT DISPLAY
-# ---------------------------------------------------
-
-if 'result' in st.session_state and "error" not in st.session_state.result:
+if "result" in st.session_state:
 
     result = st.session_state.result
 
+    if "error" in result:
+
+        st.error(result["error"])
+
+        st.stop()
+
     st.divider()
 
-    st.header("Result")
+    st.header("Executive Decision Dashboard")
 
-    # ---------------------------------------------------
+    score = result.get("risk_score", 0)
+
+    risk_level = result.get("risk_level", "N/A")
+
+    decision = result.get("decision", "REVIEW")
+
+    workflow = result.get("workflow", "N/A")
+
+    policy = result.get("policy_triggered", "N/A")
+
+    audit_required = result.get("audit_required", False)
+
+    audit_id = result.get("audit_id", "Pending")
+
+    # --------------------------------------------
+    # AI Confidence
+    # --------------------------------------------
+
+    if score >= 80:
+        confidence = "95%"
+
+    elif score >= 60:
+        confidence = "91%"
+
+    elif score >= 30:
+        confidence = "87%"
+
+    else:
+        confidence = "98%"
+
+    # --------------------------------------------
+    # Decision Badge
+    # --------------------------------------------
+
+    decision_map = {
+
+        "APPROVE": "✅ APPROVE",
+
+        "REVIEW": "🟡 REVIEW",
+
+        "ESCALATE": "⚠️ ESCALATE",
+
+        "REJECT": "❌ REJECT"
+
+    }
+
+    decision_display = decision_map.get(
+
+        decision,
+
+        decision
+
+    )
+
+    # --------------------------------------------
     # METRICS
-    # ---------------------------------------------------
+    # --------------------------------------------
 
-    score = result.get('risk_score', 0)
+    c1, c2, c3, c4 = st.columns(4)
 
-    metric1, metric2, metric3 = st.columns(3)
+    with c1:
 
-    with metric1:
         st.metric(
+
             "Risk Score",
+
             score
+
         )
 
-    with metric2:
+    with c2:
+
         st.metric(
+
             "Risk Level",
-            result.get('risk_level', 'N/A')
+
+            risk_level
+
         )
 
-    with metric3:
+    with c3:
 
-        if score >= 70:
-            confidence = "91%"
+        st.metric(
 
-        elif score >= 40:
-            confidence = "84%"
+            "AI Confidence",
+
+            confidence
+
+        )
+
+    with c4:
+
+        st.metric(
+
+            "Workflow",
+
+            workflow
+
+        )
+
+    st.divider()
+
+    # --------------------------------------------
+    # DECISION SUMMARY
+    # --------------------------------------------
+
+    st.subheader("Executive Decision")
+
+    if decision == "APPROVE":
+
+        st.success(decision_display)
+
+    elif decision == "REVIEW":
+
+        st.warning(decision_display)
+
+    elif decision == "ESCALATE":
+
+        st.warning(decision_display)
+
+    else:
+
+        st.error(decision_display)
+
+    # --------------------------------------------
+    # POLICY INFORMATION
+    # --------------------------------------------
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        st.info(f"**Policy Triggered**\n\n{policy}")
+
+    with col2:
+
+        if audit_required:
+
+            st.warning("Audit Required")
 
         else:
-            confidence = "96%"
 
-        st.metric(
-            "AI Confidence",
-            confidence
-        )
+            st.success("Audit Not Required")
 
-    # ---------------------------------------------------
-    # DECISION STATUS
-    # ---------------------------------------------------
+    # --------------------------------------------
+    # RISK CATEGORIES
+    # --------------------------------------------
 
-    decision_text = result.get(
-        'decision',
-        'ALLOW'
-    ).upper()
+    st.subheader("Risk Intelligence")
 
-    if "ALLOW" in decision_text:
+    st.write(result.get("risk_types", "Not Available"))
 
-        status_display = "✅ ALLOW"
+    # --------------------------------------------
+    # IMPACT
+    # --------------------------------------------
 
-    elif "DENY" in decision_text:
-
-        status_display = "❌ DENY"
-
-    elif "ESCALATE" in decision_text:
-
-        status_display = "⚠️ ESCALATE"
-
-    else:
-
-        status_display = "🟡 REVIEW"
-
-    st.subheader(
-        f"Initial Engine Recommendation: {status_display}"
-    )
-
-    # ---------------------------------------------------
-    # RISK TYPES
-    # ---------------------------------------------------
+    st.subheader("Business Impact Assessment")
 
     st.write(
-        f"**Risk Categories:** {result.get('risk_types', 'None')}"
-    )
 
-    # ---------------------------------------------------
-    # IMPACT ANALYSIS
-    # ---------------------------------------------------
-
-    st.markdown("### Impact Analysis")
-
-    st.write(
         result.get(
-            'impact',
-            'No summary available.'
+
+            "impact",
+
+            "No impact available."
+
         )
+
     )
 
-    # ---------------------------------------------------
+    # --------------------------------------------
     # OPPORTUNITIES
-    # ---------------------------------------------------
+    # --------------------------------------------
 
-    st.markdown("### Opportunities & Upside")
+    st.subheader("Opportunity Analysis")
 
     opportunities = result.get(
-        'opportunities',
+
+        "opportunities",
+
         []
+
     )
 
-    if isinstance(opportunities, list) and opportunities:
+    if opportunities:
 
-        for opp in opportunities:
+        for item in opportunities:
 
-            st.write(f"• 💡 {opp}")
+            st.write(f"✅ {item}")
 
     else:
 
-        st.write(
-            "No specific upside identified."
-        )
+        st.info("No opportunities identified.")
 
-    # ---------------------------------------------------
+    # --------------------------------------------
     # RECOMMENDATIONS
-    # ---------------------------------------------------
+    # --------------------------------------------
 
-    st.markdown("### Strategic Recommendations")
+    st.subheader("Executive Recommendations")
 
     recommendations = result.get(
-        'recommendations',
+
+        "recommendations",
+
         []
+
     )
 
-    if isinstance(recommendations, list) and recommendations:
+    if recommendations:
 
         for rec in recommendations:
 
-            st.write(f"• {rec}")
+            st.write(f"➡️ {rec}")
 
     else:
 
-        st.write(
-            "No recommendations provided."
-        )
-
-    # ---------------------------------------------------
-    # GOVERNANCE REVIEW PANEL
-    # ---------------------------------------------------
+        st.info("No recommendations available.")
+            # -------------------------------------------------------
+    # GOVERNANCE PANEL
+    # -------------------------------------------------------
 
     st.divider()
 
-    st.subheader(
-        "🏛️ Executive Governance Review Panel"
-    )
+    st.header("Governance & Workflow")
 
-    if score >= 50:
+    if audit_required:
 
-        warning_msg = (
-            f"Review Required: High Risk Profile Detected ({score}/100). "
-            "Manual override necessary."
+        st.warning(
+            "This decision requires governance approval before execution."
         )
 
-        st.warning(warning_msg)
+        c1, c2 = st.columns(2)
 
-        col1, col2 = st.columns(2)
-
-        with col1:
+        with c1:
 
             if st.button(
-                "🟢 Override & Approve",
+                "✅ Approve Decision",
                 use_container_width=True
             ):
 
-                st.session_state.action_status = "APPROVED_BY_ADMIN"
+                st.session_state["governance"] = "APPROVED"
 
-        with col2:
+        with c2:
 
             if st.button(
-                "🔴 Reject Decision",
+                "❌ Reject Decision",
                 use_container_width=True
             ):
 
-                st.session_state.action_status = "REJECTED_BY_ADMIN"
+                st.session_state["governance"] = "REJECTED"
 
     else:
 
         st.success(
-            "✅ Safe Zone: This choice aligns with standard operational protocols."
+            "Straight Through Processing (STP) Enabled"
         )
 
         if st.button(
-            "📁 Log to Audit Trail",
+            "📄 Record Audit",
             use_container_width=True
         ):
 
-            st.session_state.action_status = "AUTO_LOGGED"
+            st.session_state["governance"] = "AUTO_APPROVED"
 
-    # ---------------------------------------------------
-    # PERSISTENT AUDIT CONFIRMATION
-    # ---------------------------------------------------
+    # -------------------------------------------------------
+    # GOVERNANCE STATUS
+    # -------------------------------------------------------
 
-    if 'action_status' in st.session_state:
+    if "governance" in st.session_state:
 
-        status = st.session_state.action_status
+        state = st.session_state["governance"]
 
-        st.write("")
-
-        if status == "APPROVED_BY_ADMIN":
+        if state == "APPROVED":
 
             st.success(
-                "🔒 Audit Log Updated: Decision manually OVERRIDDEN & APPROVED by Executive."
+                "Executive Approval Recorded."
             )
 
-        elif status == "REJECTED_BY_ADMIN":
+        elif state == "REJECTED":
 
             st.error(
-                "🔒 Audit Log Updated: Decision formally REJECTED. Action halted."
+                "Decision Rejected by Governance."
             )
 
-        elif status == "AUTO_LOGGED":
+        elif state == "AUTO_APPROVED":
 
             st.info(
-                "🔒 Audit Log Updated: Automated signature recorded in corporate logs."
+                "Decision automatically recorded."
             )
 
-    # ---------------------------------------------------
-    # AUDIT SUMMARY
-    # ---------------------------------------------------
+    # -------------------------------------------------------
+    # AUDIT TRAIL
+    # -------------------------------------------------------
 
     st.divider()
 
-    st.subheader("📑 Audit Summary")
+    st.header("Enterprise Audit Trail")
 
-    st.write(f"• Risk Score: {score}")
+    a1, a2 = st.columns(2)
 
-    st.write(
-        f"• Risk Level: {result.get('risk_level', 'N/A')}"
+    with a1:
+
+        st.markdown(
+            f"""
+**Audit ID**
+
+`{audit_id}`
+"""
+        )
+
+        st.markdown(
+            f"""
+**Workflow**
+
+`{workflow}`
+"""
+        )
+
+    with a2:
+
+        st.markdown(
+            f"""
+**Policy Triggered**
+
+`{policy}`
+"""
+        )
+
+        st.markdown(
+            f"""
+**Audit Required**
+
+`{audit_required}`
+"""
+        )
+
+    # -------------------------------------------------------
+    # EXECUTIVE SUMMARY
+    # -------------------------------------------------------
+
+    st.divider()
+
+    st.header("Executive Summary")
+
+    st.success(
+        f"""
+### Decision
+
+**{decision_display}**
+
+Risk Score **{score}/100**
+
+Risk Level **{risk_level}**
+
+Workflow **{workflow}**
+"""
     )
 
-    st.write(f"• Decision: {status_display}")
+    # -------------------------------------------------------
+    # FOOTER
+    # -------------------------------------------------------
 
-    st.write("• Governance Status: Recorded")
+    st.divider()
 
-    st.write("• Sentinel Engine Status: Operational")
+    st.caption(
+        "Sentinel Enterprise Decision Intelligence Platform • Version 3.0"
+    )
