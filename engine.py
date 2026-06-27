@@ -4,16 +4,10 @@ from logger import log_decision
 
 def analyze_decision(user_input):
 
-    try:
+    decision = evaluate_decision(user_input)
 
-        decision = evaluate_decision(user_input)
+    print(decision.to_dict())
 
-        log_decision(decision)
+    log_decision(decision)
 
-        return decision.to_dict()
-
-    except Exception as e:
-
-        return {
-            "error": str(e)
-        }
+    return decision.to_dict()
