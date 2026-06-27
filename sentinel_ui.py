@@ -6,7 +6,7 @@ from engine import analyze_decision
 # --------------------------------------------------
 
 st.set_page_config(
-    page_title="UI VERSION V3",
+    page_title="Sentinel Enterprise Decision Intelligence",
     page_icon="🛡️",
     layout="wide"
 )
