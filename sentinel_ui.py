@@ -249,12 +249,6 @@ if "result" in st.session_state:
     st.header("Decision Intelligence")
 
     left, right = st.columns([1, 1])
-    st.divider()
-
-    st.header("Decision Intelligence")
-
-    left, right = st.columns([1, 1])
-
     # ---------------------------------------------
     # Risk Intelligence
     # ---------------------------------------------
