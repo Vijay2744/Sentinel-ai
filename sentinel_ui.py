@@ -1,133 +1,87 @@
 import streamlit as st
 from engine import analyze_decision
 
-# ==========================================================
+# --------------------------------------------------
 # PAGE CONFIGURATION
-# ==========================================================
+# --------------------------------------------------
 
 st.set_page_config(
-    page_title="Sentinel Enterprise Decision Intelligence",
+    page_title="Sentinel Enterprise",
     page_icon="🛡️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# ==========================================================
-# CUSTOM CSS
-# ==========================================================
+# --------------------------------------------------
+# ENTERPRISE STYLING
+# --------------------------------------------------
 
 st.markdown("""
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-html, body, [class*="css"]{
-    font-family:'Inter',sans-serif;
+html,body,[class*="css"]{
+    font-family:Segoe UI, sans-serif;
 }
 
-#MainMenu{
-visibility:hidden;
+.main .block-container{
+    max-width:1350px;
+    padding-top:1.2rem;
+    padding-bottom:2rem;
 }
 
-footer{
-visibility:hidden;
-}
-
-header{
-visibility:hidden;
-}
+#MainMenu{visibility:hidden;}
+footer{visibility:hidden;}
+header{visibility:hidden;}
 
 .stApp{
-background:#F4F7FB;
+    background:#F5F7FB;
 }
-
-.block-container{
-padding-top:2rem;
-padding-bottom:2rem;
-max-width:1500px;
-}
-
-/* HERO */
 
 .hero{
 
-background:linear-gradient(135deg,#0E4D92,#1C3D72);
+background:linear-gradient(135deg,#0E4D92,#1E3A8A);
 
-padding:35px;
+padding:30px;
 
 border-radius:18px;
 
 color:white;
 
-margin-bottom:30px;
-
-box-shadow:0 10px 25px rgba(0,0,0,.15);
+margin-bottom:25px;
 
 }
 
 .hero h1{
 
-font-size:42px;
+margin:0;
 
-margin-bottom:5px;
+font-size:40px;
 
 }
 
 .hero p{
 
-font-size:18px;
+margin-top:10px;
 
 opacity:.9;
 
-}
-
-/* CARD */
-
-.card{
-
-background:white;
-
-padding:20px;
-
-border-radius:16px;
-
-border:1px solid #E8EDF5;
-
-box-shadow:0 4px 15px rgba(0,0,0,.05);
+font-size:17px;
 
 }
-
-/* BUTTON */
 
 .stButton>button{
 
-background:#0E4D92;
-
-color:white;
+width:100%;
 
 height:52px;
 
-font-size:17px;
+border-radius:12px;
 
 font-weight:600;
 
-border-radius:12px;
-
-border:none;
-
-width:100%;
-
-transition:.3s;
+font-size:16px;
 
 }
-
-.stButton>button:hover{
-
-background:#0A3564;
-
-}
-
-/* TEXT AREA */
 
 textarea{
 
@@ -135,39 +89,25 @@ border-radius:12px !important;
 
 }
 
-/* SIDEBAR */
+[data-testid="stMetricValue"]{
 
-[data-testid="stSidebar"]{
-
-background:#102542;
+font-size:32px;
 
 }
 
-[data-testid="stSidebar"] *{
-
-color:white;
-
-}
-
-/* KPI */
-
-.metric-box{
+.metric-card{
 
 background:white;
 
 padding:20px;
 
-border-radius:16px;
+border-radius:15px;
 
-text-align:center;
+border:1px solid #E7EAF0;
 
-box-shadow:0 5px 20px rgba(0,0,0,.05);
-
-border:1px solid #EDF1F7;
+box-shadow:0 4px 14px rgba(0,0,0,.05);
 
 }
-
-/* MOBILE */
 
 @media(max-width:768px){
 
@@ -179,13 +119,13 @@ font-size:28px;
 
 .hero p{
 
-font-size:15px;
+font-size:14px;
 
 }
 
-.block-container{
+.main .block-container{
 
-padding:1rem;
+padding-top:1rem;
 
 }
 
@@ -194,57 +134,25 @@ padding:1rem;
 </style>
 """, unsafe_allow_html=True)
 
-# ==========================================================
-# SIDEBAR
-# ==========================================================
-
-with st.sidebar:
-
-    st.title("🛡 Sentinel")
-
-    st.caption("Enterprise AI Platform")
-
-    st.divider()
-
-    st.markdown("### Modules")
-
-    st.markdown("🏠 Dashboard")
-
-    st.markdown("🧠 AI Decision")
-
-    st.markdown("📊 Risk Intelligence")
-
-    st.markdown("⚖ Governance")
-
-    st.markdown("📜 Audit Trail")
-
-    st.markdown("📈 Analytics")
-
-    st.divider()
-
-    st.info(
-        """
-Version 4.0
-
-Enterprise Edition
-
-AI + Policy Intelligence
-"""
-    )
-
-# ==========================================================
-# HERO
-# ==========================================================
+# --------------------------------------------------
+# HERO HEADER
+# --------------------------------------------------
 
 st.markdown("""
 
 <div class="hero">
 
-<h1>🛡 Sentinel Enterprise Decision Intelligence</h1>
+<h1>🛡 Sentinel Enterprise</h1>
 
 <p>
 
-Enterprise AI • Governance • Policy Intelligence • Risk Intelligence
+Decision Intelligence Platform
+
+</p>
+
+<p>
+
+AI • Governance • Policy Intelligence • Enterprise Risk
 
 </p>
 
@@ -252,11 +160,11 @@ Enterprise AI • Governance • Policy Intelligence • Risk Intelligence
 
 """, unsafe_allow_html=True)
 
-# ==========================================================
+# --------------------------------------------------
 # INPUT
-# ==========================================================
+# --------------------------------------------------
 
-left,right=st.columns([3,2])
+left,right=st.columns([4,1])
 
 with left:
 
@@ -264,111 +172,49 @@ with left:
 
     user_input=st.text_area(
 
-        "Describe your business decision",
+        "",
 
-        height=260,
+        height=180,
 
         placeholder="""
 Examples
 
-• Launch Loan Against Securities
+• Launch Loan Against Securities for NRIs
 
 • Increase LTV from 50% to 65%
-
-• Launch AI Credit Underwriting
 
 • Approve ₹50 Crore Investment
 
 • Delete Customer Data
 
-• Open Operations in UAE
+• Launch AI Credit Underwriting
 
-• Launch Wealth Lending Platform
+• Enter New Market
 
 """
     )
 
 with right:
 
-    st.subheader("Decision Information")
+    st.subheader("")
 
-    decision_type=st.selectbox(
+    st.write("")
 
-        "Decision Type",
-
-        [
-
-            "Business Decision",
-
-            "Credit Decision",
-
-            "Risk Decision",
-
-            "Governance Decision",
-
-            "Investment Decision",
-
-            "AI Decision"
-
-        ]
-
-    )
-
-    department=st.selectbox(
-
-        "Department",
-
-        [
-
-            "Retail Banking",
-
-            "Corporate Banking",
-
-            "Risk",
-
-            "Operations",
-
-            "Technology",
-
-            "Compliance"
-
-        ]
-
-    )
-
-    priority=st.select_slider(
-
-        "Priority",
-
-        options=[
-
-            "Low",
-
-            "Medium",
-
-            "High",
-
-            "Critical"
-
-        ],
-
-        value="Medium"
-
-    )
+    st.write("")
 
     analyze=st.button(
 
         "🚀 Analyze Decision",
 
-        use_container_width=True,
+        type="primary",
 
-        type="primary"
+        use_container_width=True
 
     )
 
-# ==========================================================
-# EXECUTION
-# ==========================================================
+# --------------------------------------------------
+# EXECUTE ENGINE
+# --------------------------------------------------
 
 if analyze:
 
@@ -378,13 +224,13 @@ if analyze:
 
         st.stop()
 
-    with st.spinner("🧠 Sentinel AI is analysing your decision..."):
+    with st.spinner("🧠 Sentinel AI is analysing the request..."):
 
         st.session_state.result=analyze_decision(user_input)
 
-# ==========================================================
-# DASHBOARD START
-# ==========================================================
+# --------------------------------------------------
+# EXECUTIVE DECISION DASHBOARD
+# --------------------------------------------------
 
 if "result" in st.session_state:
 
@@ -412,25 +258,36 @@ if "result" in st.session_state:
 
     if score>=80:
 
-        confidence=95
+        confidence="95%"
 
     elif score>=60:
 
-        confidence=91
+        confidence="91%"
 
     elif score>=40:
 
-        confidence=87
+        confidence="87%"
 
     else:
 
-        confidence=98
-
-    # ==========================================================
+        confidence="98%"
+    # ---------------------------------------------
     # EXECUTIVE DASHBOARD
-    # ==========================================================
+    # ---------------------------------------------
 
-    st.markdown("## 📊 Executive Decision Dashboard")
+    decision_map = {
+        "APPROVE": ("🟢", "#10B981"),
+        "REVIEW": ("🟡", "#F59E0B"),
+        "ESCALATE": ("🟠", "#F97316"),
+        "REJECT": ("🔴", "#EF4444")
+    }
+
+    icon, color = decision_map.get(
+        decision,
+        ("⚪", "#6B7280")
+    )
+
+    st.markdown("## 📊 Executive Dashboard")
 
     c1, c2, c3, c4 = st.columns(4)
 
@@ -442,8 +299,8 @@ if "result" in st.session_state:
 
     with c2:
         st.metric(
-            "Decision",
-            decision
+            "Risk Level",
+            risk_level
         )
 
     with c3:
@@ -455,87 +312,47 @@ if "result" in st.session_state:
     with c4:
         st.metric(
             "AI Confidence",
-            f"{confidence}%"
+            confidence
         )
 
     st.write("")
 
-    # ==========================================================
-    # DECISION STATUS
-    # ==========================================================
+    st.markdown(
+        f"""
+<div style="
+background:white;
+border-left:8px solid {color};
+padding:18px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+margin-bottom:20px;
+">
 
-    if decision == "APPROVE":
+<h3 style="margin:0;">
+{icon} {decision}
+</h3>
 
-        st.success(
-            "✅ Decision Approved"
-        )
+<p style="margin-top:8px;color:#555;">
+Workflow : <b>{workflow}</b>
 
-    elif decision == "REVIEW":
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 
-        st.warning(
-            "🟡 Decision Requires Review"
-        )
+Policy : <b>{policy}</b>
 
-    elif decision == "ESCALATE":
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 
-        st.warning(
-            "⚠ Escalate to Governance Committee"
-        )
+Audit : <b>{audit_id}</b>
 
-    else:
+</p>
 
-        st.error(
-            "❌ Decision Rejected"
-        )
-
-    st.caption(
-        f"Workflow • {workflow}    |    Policy • {policy}    |    Audit • {audit_id}"
+</div>
+""",
+        unsafe_allow_html=True
     )
 
-    st.divider()
-
-    # ==========================================================
-    # ENTERPRISE RISK DASHBOARD
-    # ==========================================================
-
-    st.subheader("Enterprise Risk Dashboard")
-
-    st.progress(score / 100)
-
-    r1, r2 = st.columns([3, 1])
-
-    with r1:
-
-        if score >= 80:
-
-            st.error("Critical Enterprise Risk")
-
-        elif score >= 60:
-
-            st.warning("High Enterprise Risk")
-
-        elif score >= 40:
-
-            st.info("Medium Enterprise Risk")
-
-        else:
-
-            st.success("Low Enterprise Risk")
-
-    with r2:
-
-        st.metric(
-            "Risk Level",
-            risk_level
-        )
-
-    st.write("")
-
-    # ==========================================================
-    # BUSINESS METRICS
-    # ==========================================================
-
-    st.subheader("Business Intelligence")
+    # ---------------------------------------------
+    # BUSINESS OVERVIEW
+    # ---------------------------------------------
 
     b1, b2, b3, b4 = st.columns(4)
 
@@ -543,52 +360,50 @@ if "result" in st.session_state:
 
         st.metric(
             "Business Value",
-            f"{max(100-score,10)}%"
+            max(100-score,10)
         )
 
     with b2:
 
         st.metric(
             "Business Risk",
-            f"{score}%"
+            score
         )
 
     with b3:
 
         st.metric(
             "Regulatory",
-            "High" if score >= 70 else "Medium"
+            "High" if score>=70 else "Medium"
         )
 
     with b4:
 
         st.metric(
-            "Operational",
-            "High" if score >= 60 else "Low"
+            "Complexity",
+            "High" if score>=60 else "Low"
         )
 
     st.divider()
 
-    # ==========================================================
+    # ---------------------------------------------
     # ENTERPRISE TABS
-    # ==========================================================
+    # ---------------------------------------------
 
-    overview, risks, opportunities, recommendations = st.tabs(
-        [
-            "📋 Overview",
-            "⚠ Risk Intelligence",
-            "💡 Opportunities",
-            "🎯 Recommendations"
-        ]
-    )
+    overview, risks, opportunities_tab, recommendations_tab = st.tabs([
+        "📋 Overview",
+        "⚠ Risk Intelligence",
+        "💡 Opportunities",
+        "🎯 Recommendations"
+    ])
 
-    # ==========================================================
+    # ---------------------------------------------
     # OVERVIEW
-    # ==========================================================
+    # ---------------------------------------------
 
     with overview:
 
-        left, right = st.columns([2, 1])
+        left,right=st.columns([2,1])
 
         with left:
 
@@ -597,46 +412,41 @@ if "result" in st.session_state:
             st.write(
                 result.get(
                     "impact",
-                    "No impact available."
+                    "No business impact available."
                 )
             )
 
         with right:
 
-            st.metric(
-                "Decision",
-                decision
-            )
+            st.info(f"""
+**Risk Level**
 
-            st.metric(
-                "Risk",
-                risk_level
-            )
+{risk_level}
 
-            st.metric(
-                "Confidence",
-                f"{confidence}%"
-            )
+---
 
-    # ==========================================================
-    # RISK TAB
-    # ==========================================================
+**Workflow**
+
+{workflow}
+
+---
+
+**Confidence**
+
+{confidence}
+""")
+
+    # ---------------------------------------------
+    # RISK
+    # ---------------------------------------------
 
     with risks:
 
-        st.subheader("Risk Categories")
+        risk_types=result.get("risk_types",[])
 
-        risk_types = result.get(
-            "risk_types",
-            []
-        )
+        if isinstance(risk_types,str):
 
-        if isinstance(risk_types, str):
-
-            risk_types = [
-                x.strip()
-                for x in risk_types.split(",")
-            ]
+            risk_types=[x.strip() for x in risk_types.split(",")]
 
         if risk_types:
 
@@ -646,303 +456,270 @@ if "result" in st.session_state:
 
         else:
 
-            st.success(
-                "No risks detected."
-            )
+            st.success("No major risks detected.")
 
         st.write("")
 
-        st.info(
-            f"Triggered Policy : {policy}"
-        )
+        st.info(f"Triggered Policy : {policy}")
 
-    # ==========================================================
+    # ---------------------------------------------
     # OPPORTUNITIES
-    # ==========================================================
+    # ---------------------------------------------
 
-    with opportunities:
+    with opportunities_tab:
 
-        opps = result.get(
-            "opportunities",
-            []
-        )
+        opportunities=result.get("opportunities",[])
 
-        if opps:
+        if opportunities:
 
-            for item in opps:
+            for item in opportunities:
 
                 st.success(item)
 
         else:
 
-            st.info(
-                "No opportunities identified."
-            )
+            st.info("No opportunities identified.")
 
-    # ==========================================================
+    # ---------------------------------------------
     # RECOMMENDATIONS
-    # ==========================================================
+    # ---------------------------------------------
 
-    with recommendations:
+    with recommendations_tab:
 
-        recs = result.get(
-            "recommendations",
-            []
-        )
+        recommendations=result.get("recommendations",[])
 
-        if recs:
+        if recommendations:
 
-            for item in recs:
+            for item in recommendations:
 
-                st.write(
-                    f"➡ {item}"
-                )
+                st.write(f"➡ {item}")
 
         else:
 
-            st.info(
-                "No recommendations available."
-            )
+            st.info("No recommendations available.")
+    # ---------------------------------------------
+    # EXECUTIVE DASHBOARD
+    # ---------------------------------------------
 
-    # ==========================================================
-    # GOVERNANCE WORKFLOW
-    # ==========================================================
+    decision_map = {
+        "APPROVE": ("🟢", "#10B981"),
+        "REVIEW": ("🟡", "#F59E0B"),
+        "ESCALATE": ("🟠", "#F97316"),
+        "REJECT": ("🔴", "#EF4444")
+    }
 
-    st.divider()
+    icon, color = decision_map.get(
+        decision,
+        ("⚪", "#6B7280")
+    )
 
-    st.header("⚖ Governance Workflow")
+    st.markdown("## 📊 Executive Dashboard")
 
-    g1, g2 = st.columns([2, 1])
+    c1, c2, c3, c4 = st.columns(4)
 
-    with g1:
-
-        if audit_required:
-
-            st.warning(
-                "This decision requires Governance approval before execution."
-            )
-
-            a1, a2 = st.columns(2)
-
-            with a1:
-
-                if st.button(
-                    "✅ Approve Decision",
-                    use_container_width=True
-                ):
-                    st.session_state["governance"] = "APPROVED"
-
-            with a2:
-
-                if st.button(
-                    "❌ Reject Decision",
-                    use_container_width=True
-                ):
-                    st.session_state["governance"] = "REJECTED"
-
-        else:
-
-            st.success(
-                "Eligible for Straight Through Processing (STP)"
-            )
-
-            if st.button(
-                "📝 Record Audit",
-                use_container_width=True
-            ):
-                st.session_state["governance"] = "AUTO_APPROVED"
-
-    with g2:
-
-        st.info(
-            f"""
-### Decision Summary
-
-**Decision**
-
-{decision}
-
-**Workflow**
-
-{workflow}
-
-**Risk Level**
-
-{risk_level}
-
-**Audit Required**
-
-{audit_required}
-"""
-        )
-
-    # ==========================================================
-    # GOVERNANCE STATUS
-    # ==========================================================
-
-    if "governance" in st.session_state:
-
-        state = st.session_state["governance"]
-
-        if state == "APPROVED":
-
-            st.success("✅ Governance Approval Recorded")
-
-        elif state == "REJECTED":
-
-            st.error("❌ Decision Rejected")
-
-        elif state == "AUTO_APPROVED":
-
-            st.info("📝 Audit Successfully Recorded")
-
-    # ==========================================================
-    # AUDIT TRAIL
-    # ==========================================================
-
-    st.divider()
-
-    st.header("📜 Enterprise Audit Trail")
-
-    a1, a2, a3, a4 = st.columns(4)
-
-    with a1:
-        st.metric("Audit ID", audit_id)
-
-    with a2:
-        st.metric("Workflow", workflow)
-
-    with a3:
-        st.metric("Policy", policy)
-
-    with a4:
+    with c1:
         st.metric(
-            "Audit",
-            "Required" if audit_required else "Not Required"
+            "Risk Score",
+            f"{score}/100"
+        )
+
+    with c2:
+        st.metric(
+            "Risk Level",
+            risk_level
+        )
+
+    with c3:
+        st.metric(
+            "Workflow",
+            workflow
+        )
+
+    with c4:
+        st.metric(
+            "AI Confidence",
+            confidence
         )
 
     st.write("")
 
-    st.code(
-f"""
-Audit ID          : {audit_id}
-
-Workflow          : {workflow}
-
-Triggered Policy  : {policy}
-
-Risk Level        : {risk_level}
-
-Decision          : {decision}
-
-Confidence        : {confidence}%
-
-Audit Required    : {audit_required}
-"""
-    )
-
-    # ==========================================================
-    # EXECUTIVE SUMMARY
-    # ==========================================================
-
-    st.divider()
-
-    st.header("📋 Executive Summary")
-
-    summary = f"""
-
-Decision            : {decision}
-
-Risk Score          : {score}/100
-
-Risk Level          : {risk_level}
-
-Workflow            : {workflow}
-
-Policy Triggered    : {policy}
-
-Audit Required      : {audit_required}
-
-AI Confidence       : {confidence}%
-
-"""
-
-    if decision == "APPROVE":
-
-        st.success(summary)
-
-    elif decision == "REVIEW":
-
-        st.warning(summary)
-
-    elif decision == "ESCALATE":
-
-        st.warning(summary)
-
-    else:
-
-        st.error(summary)
-
-    # ==========================================================
-    # ENTERPRISE INSIGHTS
-    # ==========================================================
-
-    st.divider()
-
-    st.header("📊 Enterprise Insights")
-
-    i1, i2, i3 = st.columns(3)
-
-    with i1:
-
-        st.metric(
-            "Automation",
-            "92%"
-        )
-
-        st.caption("Potential Straight Through Processing")
-
-    with i2:
-
-        st.metric(
-            "Risk Reduction",
-            f"{max(100-score,15)}%"
-        )
-
-        st.caption("Estimated Risk Mitigation")
-
-    with i3:
-
-        st.metric(
-            "Decision Confidence",
-            f"{confidence}%"
-        )
-
-        st.caption("AI Assessment Confidence")
-
-    st.divider()
-
-    # ==========================================================
-    # FOOTER
-    # ==========================================================
-
     st.markdown(
-        """
-<hr>
+        f"""
+<div style="
+background:white;
+border-left:8px solid {color};
+padding:18px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+margin-bottom:20px;
+">
 
-<div style='text-align:center;
-padding:20px;
-color:gray;'>
+<h3 style="margin:0;">
+{icon} {decision}
+</h3>
 
-<h4>🛡 Sentinel Enterprise Decision Intelligence</h4>
+<p style="margin-top:8px;color:#555;">
+Workflow : <b>{workflow}</b>
 
-AI • Policy Intelligence • Governance • Enterprise Risk
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 
-<br>
+Policy : <b>{policy}</b>
 
-Version 4.0 Enterprise Edition
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+
+Audit : <b>{audit_id}</b>
+
+</p>
 
 </div>
 """,
         unsafe_allow_html=True
     )
+
+    # ---------------------------------------------
+    # BUSINESS OVERVIEW
+    # ---------------------------------------------
+
+    b1, b2, b3, b4 = st.columns(4)
+
+    with b1:
+
+        st.metric(
+            "Business Value",
+            max(100-score,10)
+        )
+
+    with b2:
+
+        st.metric(
+            "Business Risk",
+            score
+        )
+
+    with b3:
+
+        st.metric(
+            "Regulatory",
+            "High" if score>=70 else "Medium"
+        )
+
+    with b4:
+
+        st.metric(
+            "Complexity",
+            "High" if score>=60 else "Low"
+        )
+
+    st.divider()
+
+    # ---------------------------------------------
+    # ENTERPRISE TABS
+    # ---------------------------------------------
+
+    overview, risks, opportunities_tab, recommendations_tab = st.tabs([
+        "📋 Overview",
+        "⚠ Risk Intelligence",
+        "💡 Opportunities",
+        "🎯 Recommendations"
+    ])
+
+    # ---------------------------------------------
+    # OVERVIEW
+    # ---------------------------------------------
+
+    with overview:
+
+        left,right=st.columns([2,1])
+
+        with left:
+
+            st.subheader("Business Impact")
+
+            st.write(
+                result.get(
+                    "impact",
+                    "No business impact available."
+                )
+            )
+
+        with right:
+
+            st.info(f"""
+**Risk Level**
+
+{risk_level}
+
+---
+
+**Workflow**
+
+{workflow}
+
+---
+
+**Confidence**
+
+{confidence}
+""")
+
+    # ---------------------------------------------
+    # RISK
+    # ---------------------------------------------
+
+    with risks:
+
+        risk_types=result.get("risk_types",[])
+
+        if isinstance(risk_types,str):
+
+            risk_types=[x.strip() for x in risk_types.split(",")]
+
+        if risk_types:
+
+            for item in risk_types:
+
+                st.warning(item)
+
+        else:
+
+            st.success("No major risks detected.")
+
+        st.write("")
+
+        st.info(f"Triggered Policy : {policy}")
+
+    # ---------------------------------------------
+    # OPPORTUNITIES
+    # ---------------------------------------------
+
+    with opportunities_tab:
+
+        opportunities=result.get("opportunities",[])
+
+        if opportunities:
+
+            for item in opportunities:
+
+                st.success(item)
+
+        else:
+
+            st.info("No opportunities identified.")
+
+    # ---------------------------------------------
+    # RECOMMENDATIONS
+    # ---------------------------------------------
+
+    with recommendations_tab:
+
+        recommendations=result.get("recommendations",[])
+
+        if recommendations:
+
+            for item in recommendations:
+
+                st.write(f"➡ {item}")
+
+        else:
+
+            st.info("No recommendations available.")
