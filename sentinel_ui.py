@@ -210,7 +210,6 @@ if "result" in st.session_state:
     st.caption(
         f"Workflow: {workflow} | Policy: {policy} | Audit ID: {audit_id}"
     )
-
     st.divider()
 
     st.subheader("Business Intelligence")
