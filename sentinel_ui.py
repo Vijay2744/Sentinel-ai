@@ -205,11 +205,13 @@ if "result" in st.session_state:
 
     with m4:
         st.metric("AI Confidence", confidence)
+        
     display(f"{icon} {decision}")
 
     st.caption(
         f"Workflow: {workflow} | Policy: {policy} | Audit ID: {audit_id}"
     )
+    
     st.divider()
 
     st.subheader("Business Intelligence")
