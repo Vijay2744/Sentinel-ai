@@ -1,75 +1,60 @@
-from datetime import datetime
+import json
+from openai import OpenAI
+import streamlit as st
 
-from policy import POLICY
-from models import Decision
+from models import DecisionContext, Decision
+from policy import get_policy
 
 
-def check_rule(action, approved, role):
+SYSTEM_PROMPT = """
+You are Sentinel Enterprise Decision Intelligence.
 
-    rule = POLICY.get(action)
+Return ONLY valid JSON.
 
-    if not rule:
-        return Decision(
-            action=action,
-            role=role,
-            decision="DENY",
-            reason="Unknown action",
-            risk="UNKNOWN",
-            timestamp=datetime.now()
-        )
+{
+    "risk_score": 0,
+    "risk_types": [],
+    "impact": "",
+    "opportunities": [],
+    "recommendations": []
+}
+"""
 
-    risk = rule["risk"]
-    requires_approval = rule["requires_approval"]
 
-    # Role-based restriction
-    if role == "ANALYST" and risk in ["HIGH", "CRITICAL"]:
-        return Decision(
-            action=action,
-            role=role,
-            decision="DENY",
-            reason="Role not allowed for high risk",
-            risk=risk,
-            timestamp=datetime.now()
-        )
+def evaluate_decision(context: DecisionContext) -> Decision:
 
-    # Low risk always allowed
-    if risk == "LOW":
-        return Decision(
-            action=action,
-            role=role,
-            decision="ALLOW",
-            reason="Low risk action",
-            risk=risk,
-            timestamp=datetime.now()
-        )
+    client = OpenAI(
+        api_key=st.secrets["OPENAI_API_KEY"]
+    )
 
-    # Approval check
-    if requires_approval and not approved:
-        return Decision(
-            action=action,
-            role=role,
-            decision="DENY",
-            reason="Approval required",
-            risk=risk,
-            timestamp=datetime.now()
-        )
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        response_format={"type": "json_object"},
+        messages=[
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            },
+            {
+                "role": "user",
+                "content": context.user_input
+            }
+        ]
+    )
 
-    # Critical always blocked
-    if risk == "CRITICAL":
-        return Decision(
-            action=action,
-            role=role,
-            decision="DENY",
-            reason="Critical actions blocked",
-            risk=risk,
-            timestamp=datetime.now()
-        )
+    ai = json.loads(response.choices[0].message.content)
+
+    policy = get_policy(ai["risk_score"])
 
     return Decision(
-        action=action,
-        role=role,
-        decision="ALLOW",
-        reason="Allowed by policy",
-        risk=risk,
-        timestamp=datetime.now()
+        risk_score=ai["risk_score"],
+        risk_level=policy["risk_level"],
+        decision=policy["decision"],
+        workflow=policy["workflow"],
+        risk_types=ai["risk_types"],
+        impact=ai["impact"],
+        opportunities=ai["opportunities"],
+        recommendations=ai["recommendations"],
+        policy_triggered=policy["workflow"],
+        audit_required=policy["audit_required"]
     )
