@@ -205,44 +205,51 @@ if "result" in st.session_state:
 
     with m4:
         st.metric("AI Confidence", confidence)
-display(f"{icon} {decision}")
-st.caption(
-    f"Workflow: {workflow} | Policy: {policy} | Audit ID: {audit_id}"
-)
+    display(f"{icon} {decision}")
 
-st.divider()
-
-st.subheader("Business Intelligence")
-
-b1, b2, b3, b4 = st.columns(4)
-with b1:
-    st.metric(
-        "Business Value",
-        max(100 - score, 10)
+    st.caption(
+        f"Workflow: {workflow} | Policy: {policy} | Audit ID: {audit_id}"
     )
 
-with b2:
-    st.metric(
-        "Business Risk",
-        score
-    )
+    st.divider()
 
-with b3:
-    st.metric(
-        "Regulatory Impact",
-        "High" if score >= 70 else "Medium"
-    )
+    st.subheader("Business Intelligence")
 
-with b4:
-    st.metric(
-        "Operational Complexity",
-        "High" if score >= 60 else "Low"
-    )
+    b1, b2, b3, b4 = st.columns(4)
 
-# --------------------------------------------------
-# DECISION INTELLIGENCE
-# --------------------------------------------------
+    with b1:
+        st.metric(
+            "Business Value",
+            max(100 - score, 10)
+        )
 
+    with b2:
+        st.metric(
+            "Business Risk",
+            score
+        )
+
+    with b3:
+        st.metric(
+            "Regulatory Impact",
+            "High" if score >= 70 else "Medium"
+        )
+
+    with b4:
+        st.metric(
+            "Operational Complexity",
+            "High" if score >= 60 else "Low"
+        )
+
+    # --------------------------------------------------
+    # DECISION INTELLIGENCE
+    # --------------------------------------------------
+
+    st.divider()
+
+    st.header("Decision Intelligence")
+
+    left, right = st.columns([1, 1])
     st.divider()
 
     st.header("Decision Intelligence")
