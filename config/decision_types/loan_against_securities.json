@@ -1,0 +1,58 @@
+{
+  "decision_type": "loan_against_securities",
+  "version": "1.0",
+  "required_context_fields": [
+    "applicant_id",
+    "portfolio_value",
+    "requested_amount",
+    "ltv_requested",
+    "kyc_status",
+    "asset_class",
+    "existing_exposure",
+    "credit_score",
+    "requested_amount_within_limit"
+  ],
+  "knowledge": {
+    "sources": ["las_credit_policy_manual"],
+    "query_fields": ["asset_class"],
+    "top_k": 3,
+    "min_relevance": 0.1,
+    "require_evidence": false
+  },
+  "ai_reasoning": {
+    "_comment": "Recommendation labels intentionally match the decision engine's outcome vocabulary (ELIGIBLE/REVIEW/DECLINE) so a real divergence between AI and deterministic logic is detectable, rather than an artifact of two different label sets.",
+    "weights": {
+      "credit_score": 0.05,
+      "ltv_requested": -30,
+      "existing_exposure": -0.000005
+    },
+    "bias": 0,
+    "thresholds": [
+      { "max_score": 5, "recommendation": "DECLINE" },
+      { "max_score": 15, "recommendation": "REVIEW" },
+      { "max_score": 999, "recommendation": "ELIGIBLE" }
+    ],
+    "default_recommendation": "REVIEW"
+  },
+  "decision_engine": {
+    "version": "1.0",
+    "rules": [
+      { "id": "DE1", "description": "LTV within standard cap for asset class", "field": "ltv_requested", "op": "<=", "value": 0.5, "weight": 40 },
+      { "id": "DE2", "description": "Credit score at least 700", "field": "credit_score", "op": ">=", "value": 700, "weight": 30 },
+      { "id": "DE3", "description": "Requested amount within portfolio-based limit", "field": "requested_amount_within_limit", "op": "==", "value": true, "weight": 30 }
+    ],
+    "thresholds": [
+      { "min_score": 70, "outcome": "ELIGIBLE" },
+      { "min_score": 40, "outcome": "REVIEW" },
+      { "min_score": -1, "outcome": "DECLINE" }
+    ]
+  },
+  "policies": ["kyc_mandatory", "ltv_hard_cap"],
+  "policy_failure_outcome": "DECLINE",
+  "escalation": {
+    "min_confidence": 0.55,
+    "mandatory_review_outcomes": ["REVIEW"],
+    "escalate_on_conflict": true,
+    "max_auto_approve": { "field": "requested_amount", "value": 5000000 }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "policy_id": "kyc_mandatory",
+  "version": "1.0",
+  "active": true,
+  "rules": [
+    {
+      "id": "P1",
+      "description": "KYC must be verified before any lending decision",
+      "field": "kyc_status",
+      "op": "==",
+      "value": "VERIFIED"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "source": "las_credit_policy_manual",
+  "version": "3.0",
+  "sections": [
+    {
+      "section": "4.1",
+      "content": "Loan against securities LTV caps vary by asset class: equity shares up to 50 percent, mutual fund units up to 50 percent, and sovereign bonds up to 80 percent of market value, subject to the hard regulatory ceiling of 65 percent during periods of high volatility."
+    },
+    {
+      "section": "4.2",
+      "content": "Mutual fund units pledged as collateral require daily mark to market and automatic margin call triggers when the loan to value ratio breaches the sanctioned limit for that asset class."
+    },
+    {
+      "section": "5.3",
+      "content": "KYC verification is mandatory before disbursement for all loan against securities and loan against mutual fund applications regardless of ticket size or existing relationship."
+    }
+  ]
+}

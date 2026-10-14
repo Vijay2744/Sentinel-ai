@@ -1,0 +1,14 @@
+{
+  "policy_id": "ltv_hard_cap",
+  "version": "1.0",
+  "active": true,
+  "rules": [
+    {
+      "id": "P1",
+      "description": "LTV must never exceed the regulatory hard ceiling",
+      "field": "ltv_requested",
+      "op": "<=",
+      "value": 0.65
+    }
+  ]
+}
